@@ -7,3 +7,10 @@ export interface Task {
   createdAt: string;
   updatedAt: string;
 }
+
+export const nextStatus: Record<TaskStatus, TaskStatus | null> = {
+  to_do: "pending",
+  pending: "in_progress",
+  in_progress: "done",
+  done: null,
+};

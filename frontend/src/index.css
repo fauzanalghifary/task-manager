@@ -55,3 +55,7 @@ input::placeholder,
 textarea::placeholder {
   color: var(--ink-mute);
 }
+
+button:not(:disabled) {
+  cursor: pointer;
+}

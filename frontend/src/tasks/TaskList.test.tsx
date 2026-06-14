@@ -19,11 +19,15 @@ describe("TaskList", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Loading tasks...");
   });
 
-  it("shows an empty state when no tasks exist", () => {
+  it("shows every status group when no tasks exist", () => {
     render(<TaskList isError={false} isPending={false} tasks={[]} />);
 
-    expect(screen.getByText("No tasks yet")).toBeInTheDocument();
-    expect(screen.getByText("New tasks will appear here.")).toBeInTheDocument();
+    expect(
+      screen
+        .getAllByRole("heading", { level: 2 })
+        .map((heading) => heading.textContent),
+    ).toEqual(["To do", "Pending", "In progress", "Done"]);
+    expect(screen.getAllByText("No tasks")).toHaveLength(4);
   });
 
   it("shows an error state when tasks cannot be loaded", () => {
@@ -41,5 +45,37 @@ describe("TaskList", () => {
       screen.getByRole("heading", { name: "Prepare invoice" }),
     ).toBeInTheDocument();
     expect(screen.getByText("To do")).toBeInTheDocument();
+  });
+
+  it("groups tasks by status in workflow order", () => {
+    render(
+      <TaskList
+        isError={false}
+        isPending={false}
+        tasks={[
+          { ...task, id: "done", title: "Archive invoice", status: "done" },
+          {
+            ...task,
+            id: "pending",
+            title: "Review invoice",
+            status: "pending",
+          },
+          task,
+        ]}
+      />,
+    );
+
+    const groupHeadings = screen.getAllByRole("heading", { level: 2 });
+
+    expect(groupHeadings.map((heading) => heading.textContent)).toEqual([
+      "To do",
+      "Pending",
+      "In progress",
+      "Done",
+    ]);
+    expect(
+      screen.getByRole("heading", { level: 2, name: "In progress" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("No tasks")).toBeInTheDocument();
   });
 });
