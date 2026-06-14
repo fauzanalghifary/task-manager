@@ -1,9 +1,17 @@
 import request from "supertest";
-import { describe, expect, it } from "vitest";
+import { afterAll, describe, expect, it } from "vitest";
 
-import { app } from "../src/app.js";
+import { createApp } from "../src/app.js";
+import { createDatabase } from "../src/database/database.js";
 
 describe("GET /api/health", () => {
+  const database = createDatabase(":memory:");
+  const app = createApp(database);
+
+  afterAll(() => {
+    database.close();
+  });
+
   it("returns the service health", async () => {
     const response = await request(app).get("/api/health");
 

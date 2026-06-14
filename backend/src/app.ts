@@ -1,9 +1,17 @@
 import express from "express";
+import type Database from "better-sqlite3";
 
-export const app = express();
+import { healthHandler } from "./health/health-handler.js";
+import { TaskRepository } from "./tasks/task-repository.js";
+import { createTaskRouter } from "./tasks/task-router.js";
 
-app.use(express.json());
+export function createApp(database: Database.Database) {
+  const app = express();
+  const taskRepository = new TaskRepository(database);
 
-app.get("/api/health", (_request, response) => {
-  response.json({ status: "ok" });
-});
+  app.use(express.json());
+  app.get("/api/health", healthHandler);
+  app.use("/api/tasks", createTaskRouter(taskRepository));
+
+  return app;
+}
