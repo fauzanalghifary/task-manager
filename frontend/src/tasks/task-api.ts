@@ -1,4 +1,5 @@
 import type { Actor } from "./actor";
+import type { AuditLog } from "./audit-log";
 import type { Task, TaskStatus } from "./task";
 
 export interface CreateTaskInput {
@@ -66,4 +67,14 @@ export async function deleteTask(id: string): Promise<void> {
   if (!response.ok) {
     throw new Error("Unable to delete task");
   }
+}
+
+export async function fetchTaskAuditLogs(taskId: string): Promise<AuditLog[]> {
+  const response = await fetch(`/api/tasks/${taskId}/audit-logs`);
+
+  if (!response.ok) {
+    throw new Error("Unable to load task history");
+  }
+
+  return response.json() as Promise<AuditLog[]>;
 }

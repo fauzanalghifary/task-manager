@@ -1,12 +1,15 @@
-import { nextStatus, type Task, type TaskStatus } from "./task";
+import type { AuditLog } from "./audit-log";
+import type { Task, TaskStatus } from "./task";
+import { TaskItem } from "./TaskItem";
 
 interface TaskListProps {
   isError: boolean;
   isPending: boolean;
   tasks: Task[];
-  busyTaskId?: string | null;
-  onAdvance?: (task: Task) => void;
-  onDelete?: (task: Task) => void;
+  busyTaskId: string | null;
+  onAdvance: (task: Task) => void;
+  onDelete: (task: Task) => void;
+  loadAuditLogs: (taskId: string) => Promise<AuditLog[]>;
 }
 
 const statusLabels: Record<TaskStatus, string> = {
@@ -32,6 +35,7 @@ export function TaskList({
   busyTaskId,
   onAdvance,
   onDelete,
+  loadAuditLogs,
 }: TaskListProps) {
   if (isPending) {
     return (
@@ -79,57 +83,15 @@ export function TaskList({
             ) : (
               <ul className="grid list-none gap-2 p-0">
                 {tasksInStatus.map((task) => {
-                  const next = nextStatus[task.status];
-                  const isBusy = busyTaskId === task.id;
-
                   return (
-                    <li
+                    <TaskItem
                       key={task.id}
-                      className="group rounded-xl border border-(--border) bg-(--surface) px-5 py-4 transition-colors hover:border-(--border-strong)"
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <h3 className="min-w-0 font-medium text-(--ink)">
-                          {task.title}
-                        </h3>
-
-                        <div className="flex shrink-0 items-center gap-1">
-                          {next && onAdvance ? (
-                            <button
-                              type="button"
-                              onClick={() => onAdvance(task)}
-                              disabled={isBusy}
-                              className="rounded-md px-2.5 py-1.5 text-xs font-medium text-(--ink-soft) transition-colors hover:bg-(--canvas) hover:text-(--ink) disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                              Move to {statusLabels[next]}
-                            </button>
-                          ) : null}
-                          {onDelete ? (
-                            <button
-                              type="button"
-                              onClick={() => onDelete(task)}
-                              disabled={isBusy}
-                              aria-label={`Delete ${task.title}`}
-                              className="rounded-md p-1.5 text-(--ink-mute) transition-colors hover:bg-(--canvas) hover:text-(--danger) disabled:cursor-not-allowed disabled:opacity-50"
-                            >
-                              <svg
-                                width="14"
-                                height="14"
-                                viewBox="0 0 14 14"
-                                fill="none"
-                                aria-hidden
-                              >
-                                <path
-                                  d="M3 3l8 8M11 3l-8 8"
-                                  stroke="currentColor"
-                                  strokeWidth="1.5"
-                                  strokeLinecap="round"
-                                />
-                              </svg>
-                            </button>
-                          ) : null}
-                        </div>
-                      </div>
-                    </li>
+                      task={task}
+                      isBusy={busyTaskId === task.id}
+                      onAdvance={onAdvance}
+                      onDelete={onDelete}
+                      loadAuditLogs={loadAuditLogs}
+                    />
                   );
                 })}
               </ul>

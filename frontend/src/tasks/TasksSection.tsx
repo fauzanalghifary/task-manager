@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { actors, type Actor } from "./actor";
+import { taskAuditLogsQueryKey, type AuditLog } from "./audit-log";
 import {
   createTask,
   deleteTask,
+  fetchTaskAuditLogs,
   fetchTasks,
   updateTaskStatus,
   type CreateTaskInput,
@@ -21,6 +23,7 @@ interface TasksSectionProps {
   submitTask?: (input: CreateTaskInput) => Promise<Task>;
   changeTaskStatus?: (input: UpdateTaskStatusInput) => Promise<Task>;
   removeTask?: (id: string) => Promise<void>;
+  loadTaskAuditLogs?: (taskId: string) => Promise<AuditLog[]>;
 }
 
 export function TasksSection({
@@ -28,6 +31,7 @@ export function TasksSection({
   submitTask = createTask,
   changeTaskStatus = updateTaskStatus,
   removeTask = deleteTask,
+  loadTaskAuditLogs = fetchTaskAuditLogs,
 }: TasksSectionProps) {
   const [actor, setActor] = useState<Actor>(actors[0].value);
   const queryClient = useQueryClient();
@@ -43,8 +47,13 @@ export function TasksSection({
   });
   const updateStatusMutation = useMutation({
     mutationFn: (input: UpdateTaskStatusInput) => changeTaskStatus(input),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: tasksQueryKey });
+    onSuccess: async (_task, input) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: tasksQueryKey }),
+        queryClient.invalidateQueries({
+          queryKey: taskAuditLogsQueryKey(input.id),
+        }),
+      ]);
     },
   });
   const deleteMutation = useMutation({
@@ -122,6 +131,7 @@ export function TasksSection({
         isPending={tasksQuery.isPending}
         tasks={tasks}
         busyTaskId={busyTaskId}
+        loadAuditLogs={loadTaskAuditLogs}
         onAdvance={(task) => {
           const next = nextStatus[task.status];
           if (next) {
