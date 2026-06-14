@@ -30,32 +30,26 @@ export function TasksSection({
   const tasks = tasksQuery.data ?? [];
 
   return (
-    <section className="mt-16 border-t border-[#d9d3c6] pt-8">
-      <div className="mb-6 flex items-baseline justify-between gap-4">
-        <h2 className="text-2xl font-bold tracking-[-0.02em] text-[#20231d]">
-          Tasks
-        </h2>
-        {tasksQuery.isSuccess && (
-          <p className="text-sm text-[#777269]">
-            {tasks.length} {tasks.length === 1 ? "task" : "tasks"}
-          </p>
-        )}
-      </div>
+    <section className="space-y-8">
+      <TaskForm
+        isError={createTaskMutation.isError}
+        isSubmitting={createTaskMutation.isPending}
+        onSubmit={async (input) => {
+          await createTaskMutation.mutateAsync(input);
+        }}
+      />
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(16rem,22rem)_1fr]">
-        <TaskForm
-          isError={createTaskMutation.isError}
-          isSubmitting={createTaskMutation.isPending}
-          onSubmit={async (input) => {
-            await createTaskMutation.mutateAsync(input);
-          }}
-        />
-        <TaskList
-          isError={tasksQuery.isError}
-          isPending={tasksQuery.isPending}
-          tasks={tasks}
-        />
-      </div>
+      {tasksQuery.isSuccess && tasks.length > 0 && (
+        <p className="text-sm text-(--ink-mute)">
+          {tasks.length} {tasks.length === 1 ? "task" : "tasks"}
+        </p>
+      )}
+
+      <TaskList
+        isError={tasksQuery.isError}
+        isPending={tasksQuery.isPending}
+        tasks={tasks}
+      />
     </section>
   );
 }

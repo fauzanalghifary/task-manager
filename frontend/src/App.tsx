@@ -2,16 +2,13 @@ import { TasksSection } from "./tasks/TasksSection";
 
 function App() {
   return (
-    <main className="mx-auto w-[min(calc(100%-2rem),72rem)] py-20">
-      <header className="max-w-2xl">
-        <p className="mb-3 text-xs font-bold tracking-[0.12em] text-[#a0442b] uppercase">
-          Internal workspace
-        </p>
-        <h1 className="text-[clamp(2.5rem,7vw,4.75rem)] leading-[0.95] font-bold tracking-tighter text-[#20231d]">
-          Task Manager
+    <main className="mx-auto w-[min(calc(100%-2rem),40rem)] py-20">
+      <header className="mb-10">
+        <h1 className="text-3xl font-semibold tracking-tight text-(--ink)">
+          Tasks
         </h1>
-        <p className="mt-6 max-w-xl text-lg leading-7">
-          Create tasks, move work forward, and review every status change.
+        <p className="mt-2 text-(--ink-soft)">
+          Capture work and track it through to done.
         </p>
       </header>
 

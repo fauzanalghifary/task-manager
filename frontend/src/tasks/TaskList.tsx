@@ -1,5 +1,4 @@
-import type { Task } from "./task";
-import type { TaskStatus } from "./task";
+import type { Task, TaskStatus } from "./task";
 
 interface TaskListProps {
   isError: boolean;
@@ -14,57 +13,67 @@ const statusLabels: Record<TaskStatus, string> = {
   done: "Done",
 };
 
+const statusDot: Record<TaskStatus, string> = {
+  to_do: "bg-[var(--status-to-do)]",
+  pending: "bg-[var(--status-pending)]",
+  in_progress: "bg-[var(--status-in-progress)]",
+  done: "bg-[var(--status-done)]",
+};
+
 export function TaskList({ isError, isPending, tasks }: TaskListProps) {
-  return (
-    <>
-      {isPending && (
-        <p role="status" className="text-[#777269]">
-          Loading tasks...
+  if (isPending) {
+    return (
+      <p role="status" className="text-sm text-(--ink-mute)">
+        Loading tasks...
+      </p>
+    );
+  }
+
+  if (isError) {
+    return (
+      <p role="alert" className="text-sm text-(--danger)">
+        Tasks could not be loaded. Please try again.
+      </p>
+    );
+  }
+
+  if (tasks.length === 0) {
+    return (
+      <div className="rounded-xl border border-dashed border-[var(--border-strong)] px-6 py-14 text-center">
+        <p className="font-medium text-(--ink)">No tasks yet</p>
+        <p className="mt-1 text-sm text-[var(--ink-mute)]">
+          New tasks will appear here.
         </p>
-      )}
+      </div>
+    );
+  }
 
-      {isError && (
-        <div
-          role="alert"
-          className="border-l-4 border-[#a0442b] bg-[#eee6d8] px-4 py-3 text-[#6f2f20]"
+  return (
+    <ul className="grid list-none gap-2 p-0">
+      {tasks.map((task) => (
+        <li
+          key={task.id}
+          className="rounded-xl border border-(--border) bg-(--surface) px-5 py-4 transition-colors hover:border-(--border-strong)"
         >
-          Tasks could not be loaded. Please try again.
-        </div>
-      )}
-
-      {!isPending && !isError && tasks.length === 0 && (
-        <div className="border border-dashed border-[#c9c1b1] px-6 py-12 text-center">
-          <p className="font-bold text-[#20231d]">No tasks yet</p>
-          <p className="mt-2 text-sm text-[#777269]">
-            New tasks will appear here.
-          </p>
-        </div>
-      )}
-
-      {!isPending && !isError && tasks.length > 0 && (
-        <ul className="grid list-none gap-3 p-0">
-          {tasks.map((task) => (
-            <li
-              key={task.id}
-              className="border border-[#d9d3c6] bg-[#faf8f2] px-5 py-4"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="font-bold text-[#20231d]">{task.title}</h3>
-                  {task.description && (
-                    <p className="mt-2 text-sm leading-6 text-[#6a665e]">
-                      {task.description}
-                    </p>
-                  )}
-                </div>
-                <span className="shrink-0 bg-[#e7dfcf] px-2.5 py-1 text-xs font-bold text-[#5a554c]">
-                  {statusLabels[task.status]}
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </>
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <h3 className="font-medium text-(--ink)">{task.title}</h3>
+              {task.description && (
+                <p className="mt-1 text-sm leading-relaxed text-(--ink-soft)">
+                  {task.description}
+                </p>
+              )}
+            </div>
+            <span className="inline-flex shrink-0 items-center gap-2 text-xs text-(--ink-soft)">
+              <span
+                aria-hidden
+                className={`h-1.5 w-1.5 rounded-full ${statusDot[task.status]}`}
+              />
+              {statusLabels[task.status]}
+            </span>
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 }
