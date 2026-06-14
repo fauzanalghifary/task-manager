@@ -1,4 +1,4 @@
-import { TaskList } from "./tasks/TaskList";
+import { TasksSection } from "./tasks/TasksSection";
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
         </p>
       </header>
 
-      <TaskList />
+      <TasksSection />
     </main>
   );
 }

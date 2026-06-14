@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import type { Task } from "./task";
 import { TaskList } from "./TaskList";
@@ -14,39 +14,34 @@ const task: Task = {
 };
 
 describe("TaskList", () => {
-  it("shows a loading state while tasks are being fetched", () => {
-    const loadTasks = vi.fn(() => new Promise<Task[]>(() => undefined));
-
-    render(<TaskList loadTasks={loadTasks} />);
+  it("shows a loading state", () => {
+    render(<TaskList isError={false} isPending tasks={[]} />);
 
     expect(screen.getByRole("status")).toHaveTextContent("Loading tasks...");
   });
 
-  it("shows an empty state when no tasks exist", async () => {
-    render(<TaskList loadTasks={async () => []} />);
+  it("shows an empty state when no tasks exist", () => {
+    render(<TaskList isError={false} isPending={false} tasks={[]} />);
 
-    expect(await screen.findByText("No tasks yet")).toBeInTheDocument();
+    expect(screen.getByText("No tasks yet")).toBeInTheDocument();
     expect(screen.getByText("New tasks will appear here.")).toBeInTheDocument();
   });
 
-  it("shows an error state when tasks cannot be loaded", async () => {
-    const loadTasks = vi.fn().mockRejectedValue(new Error("Network error"));
+  it("shows an error state when tasks cannot be loaded", () => {
+    render(<TaskList isError isPending={false} tasks={[]} />);
 
-    render(<TaskList loadTasks={loadTasks} />);
-
-    expect(await screen.findByRole("alert")).toHaveTextContent(
+    expect(screen.getByRole("alert")).toHaveTextContent(
       "Tasks could not be loaded. Please try again.",
     );
   });
 
-  it("renders tasks returned by the API", async () => {
-    render(<TaskList loadTasks={async () => [task]} />);
+  it("renders tasks returned by the API", () => {
+    render(<TaskList isError={false} isPending={false} tasks={[task]} />);
 
     expect(
-      await screen.findByRole("heading", { name: "Prepare invoice" }),
+      screen.getByRole("heading", { name: "Prepare invoice" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Send it to the customer")).toBeInTheDocument();
     expect(screen.getByText("To do")).toBeInTheDocument();
-    expect(screen.getByText("1 task")).toBeInTheDocument();
   });
 });
