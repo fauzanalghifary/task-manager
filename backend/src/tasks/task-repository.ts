@@ -86,6 +86,15 @@ export class TaskRepository {
     return row ? mapTask(row) : null;
   }
 
+  exists(id: string): boolean {
+    return (
+      this.database
+        .prepare("SELECT 1 FROM tasks WHERE id = ?")
+        .pluck()
+        .get(id) === 1
+    );
+  }
+
   updateStatus(
     id: string,
     fromStatus: TaskStatus,
@@ -101,6 +110,20 @@ export class TaskRepository {
         `,
       )
       .run(toStatus, updatedAt, id, fromStatus);
+
+    return result.changes === 1;
+  }
+
+  softDelete(id: string, deletedAt: string): boolean {
+    const result = this.database
+      .prepare(
+        `
+          UPDATE tasks
+          SET deleted_at = ?, updated_at = ?
+          WHERE id = ? AND deleted_at IS NULL
+        `,
+      )
+      .run(deletedAt, deletedAt, id);
 
     return result.changes === 1;
   }

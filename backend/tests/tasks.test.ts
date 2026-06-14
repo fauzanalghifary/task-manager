@@ -256,4 +256,49 @@ describe("task endpoints", () => {
     );
     expect(auditResponse.body).toEqual([]);
   });
+
+  it("soft deletes a task and preserves its audit logs", async () => {
+    const app = createApp(database);
+    const createResponse = await request(app)
+      .post("/api/tasks")
+      .send({ title: "Prepare invoice" });
+    const taskId = createResponse.body.id;
+
+    await request(app)
+      .patch(`/api/tasks/${taskId}/status`)
+      .send({ status: "pending", actor: "john.doe" });
+
+    const deleteResponse = await request(app).delete(`/api/tasks/${taskId}`);
+
+    expect(deleteResponse.status).toBe(204);
+    expect(deleteResponse.body).toEqual({});
+
+    const tasksResponse = await request(app).get("/api/tasks");
+    expect(tasksResponse.body).toEqual([]);
+
+    const updateResponse = await request(app)
+      .patch(`/api/tasks/${taskId}/status`)
+      .send({ status: "in_progress", actor: "jane.smith" });
+    expect(updateResponse.status).toBe(404);
+
+    const auditResponse = await request(app).get(
+      `/api/tasks/${taskId}/audit-logs`,
+    );
+    expect(auditResponse.status).toBe(200);
+    expect(auditResponse.body).toHaveLength(1);
+  });
+
+  it("returns not found when deleting an already deleted task", async () => {
+    const app = createApp(database);
+    const createResponse = await request(app)
+      .post("/api/tasks")
+      .send({ title: "Prepare invoice" });
+    const taskId = createResponse.body.id;
+
+    await request(app).delete(`/api/tasks/${taskId}`);
+    const response = await request(app).delete(`/api/tasks/${taskId}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body).toEqual({ error: "Task not found" });
+  });
 });

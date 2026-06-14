@@ -85,10 +85,21 @@ export class TaskService {
   }
 
   findAuditLogs(taskId: string): AuditLog[] {
-    if (!this.taskRepository.findById(taskId)) {
+    if (!this.taskRepository.exists(taskId)) {
       throw new TaskNotFoundError();
     }
 
     return this.auditLogRepository.findByTaskId(taskId);
+  }
+
+  deleteTask(taskId: string): void {
+    const didDelete = this.taskRepository.softDelete(
+      taskId,
+      new Date().toISOString(),
+    );
+
+    if (!didDelete) {
+      throw new TaskNotFoundError();
+    }
   }
 }

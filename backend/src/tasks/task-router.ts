@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import {
   createCreateTaskHandler,
+  createDeleteTaskHandler,
   createListTasksHandler,
   createListAuditLogsHandler,
   createUpdateTaskStatusHandler,
@@ -19,6 +20,7 @@ export function createTaskRouter(
   router.post("/", createCreateTaskHandler(taskRepository));
   router.patch("/:id/status", createUpdateTaskStatusHandler(taskService));
   router.get("/:id/audit-logs", createListAuditLogsHandler(taskService));
+  router.delete("/:id", createDeleteTaskHandler(taskService));
 
   return router;
 }

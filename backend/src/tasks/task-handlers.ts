@@ -107,3 +107,21 @@ export function createListAuditLogsHandler(
     }
   };
 }
+
+export function createDeleteTaskHandler(
+  taskService: TaskService,
+): RequestHandler<{ id: string }> {
+  return (request, response) => {
+    try {
+      taskService.deleteTask(request.params.id);
+      response.status(204).send();
+    } catch (error) {
+      if (error instanceof TaskNotFoundError) {
+        response.status(404).json({ error: "Task not found" });
+        return;
+      }
+
+      throw error;
+    }
+  };
+}
