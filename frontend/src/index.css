@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   font-family: Georgia, "Times New Roman", serif;
   color: #55534d;
@@ -6,23 +8,9 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --color-heading: #20231d;
-  --color-accent: #a0442b;
-}
-
-* {
-  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
   min-width: 20rem;
   min-height: 100vh;
-}
-
-button,
-input,
-textarea,
-select {
-  font: inherit;
 }

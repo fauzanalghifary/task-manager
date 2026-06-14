@@ -1,12 +1,14 @@
-import "./App.css";
-
 function App() {
   return (
-    <main className="app">
-      <header className="app__header">
-        <p className="app__eyebrow">Internal workspace</p>
-        <h1>Task Manager</h1>
-        <p className="app__intro">
+    <main className="mx-auto w-[min(calc(100%-2rem),72rem)] py-20">
+      <header className="max-w-2xl">
+        <p className="mb-3 text-xs font-bold tracking-[0.12em] text-[#a0442b] uppercase">
+          Internal workspace
+        </p>
+        <h1 className="text-[clamp(2.5rem,7vw,4.75rem)] leading-[0.95] font-bold tracking-[-0.05em] text-[#20231d]">
+          Task Manager
+        </h1>
+        <p className="mt-6 max-w-xl text-lg leading-7">
           Create tasks, move work forward, and review every status change.
         </p>
       </header>
