@@ -6,6 +6,15 @@
     "frontend",
     "backend"
   ],
+  "scripts": {
+    "dev:backend": "npm run dev -w backend",
+    "dev:frontend": "npm run dev -w frontend",
+    "test": "npm run test --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "lint": "npm run lint -w frontend",
+    "build": "npm run build -w frontend",
+    "check": "npm run test && npm run typecheck && npm run lint && npm run build"
+  },
   "engines": {
     "node": ">=22.0.0"
   }
