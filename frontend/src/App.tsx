@@ -1,3 +1,5 @@
+import { TaskList } from "./tasks/TaskList";
+
 function App() {
   return (
     <main className="mx-auto w-[min(calc(100%-2rem),72rem)] py-20">
@@ -12,6 +14,8 @@ function App() {
           Create tasks, move work forward, and review every status change.
         </p>
       </header>
+
+      <TaskList />
     </main>
   );
 }
