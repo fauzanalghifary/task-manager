@@ -58,11 +58,6 @@ export function TaskList({ isError, isPending, tasks }: TaskListProps) {
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <h3 className="font-medium text-(--ink)">{task.title}</h3>
-              {task.description && (
-                <p className="mt-1 text-sm leading-relaxed text-(--ink-soft)">
-                  {task.description}
-                </p>
-              )}
             </div>
             <span className="inline-flex shrink-0 items-center gap-2 text-xs text-(--ink-soft)">
               <span

@@ -7,7 +7,6 @@ import { TaskList } from "./TaskList";
 const task: Task = {
   id: "task-1",
   title: "Prepare invoice",
-  description: "Send it to the customer",
   status: "to_do",
   createdAt: "2026-06-14T10:00:00.000Z",
   updatedAt: "2026-06-14T10:00:00.000Z",
@@ -41,7 +40,6 @@ describe("TaskList", () => {
     expect(
       screen.getByRole("heading", { name: "Prepare invoice" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Send it to the customer")).toBeInTheDocument();
     expect(screen.getByText("To do")).toBeInTheDocument();
   });
 });

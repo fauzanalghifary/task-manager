@@ -9,7 +9,6 @@ import { TasksSection } from "./TasksSection";
 const createdTask: Task = {
   id: "task-1",
   title: "Prepare invoice",
-  description: null,
   status: "to_do",
   createdAt: "2026-06-14T10:00:00.000Z",
   updatedAt: "2026-06-14T10:00:00.000Z",

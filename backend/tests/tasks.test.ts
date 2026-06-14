@@ -18,15 +18,11 @@ describe("task endpoints", () => {
   it("creates a task with the initial status", async () => {
     const response = await request(createApp(database))
       .post("/api/tasks")
-      .send({
-        title: "  Prepare invoice  ",
-        description: "  Send it to the customer  ",
-      });
+      .send({ title: "  Prepare invoice  " });
 
     expect(response.status).toBe(201);
     expect(response.body).toMatchObject({
       title: "Prepare invoice",
-      description: "Send it to the customer",
       status: "to_do",
     });
     expect(response.body.id).toEqual(expect.any(String));

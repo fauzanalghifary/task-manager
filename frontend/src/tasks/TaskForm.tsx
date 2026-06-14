@@ -10,14 +10,12 @@ interface TaskFormProps {
 
 export function TaskForm({ isError, isSubmitting, onSubmit }: TaskFormProps) {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [titleError, setTitleError] = useState<string | null>(null);
 
   async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const trimmedTitle = title.trim();
-    const trimmedDescription = description.trim();
 
     if (!trimmedTitle) {
       setTitleError("Title is required");
@@ -27,16 +25,12 @@ export function TaskForm({ isError, isSubmitting, onSubmit }: TaskFormProps) {
     setTitleError(null);
 
     try {
-      await onSubmit({
-        title: trimmedTitle,
-        ...(trimmedDescription && { description: trimmedDescription }),
-      });
+      await onSubmit({ title: trimmedTitle });
     } catch {
       return;
     }
 
     setTitle("");
-    setDescription("");
   }
 
   const inputClass =
@@ -47,53 +41,29 @@ export function TaskForm({ isError, isSubmitting, onSubmit }: TaskFormProps) {
       className="rounded-xl border border-(--border) bg-(--surface) p-5"
       onSubmit={(event) => void handleSubmit(event)}
     >
-      <div className="space-y-4">
-        <div>
-          <label
-            htmlFor="title"
-            className="block text-sm font-medium text-(--ink)"
-          >
-            Title
-          </label>
-          <input
-            id="title"
-            name="title"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            aria-describedby={titleError ? "title-error" : undefined}
-            aria-invalid={titleError ? true : undefined}
-            disabled={isSubmitting}
-            placeholder="What needs to be done?"
-            className={`mt-1.5 ${inputClass}`}
-          />
-          {titleError && (
-            <p id="title-error" className="mt-1.5 text-sm text-(--danger)">
-              {titleError}
-            </p>
-          )}
-        </div>
-
-        <div>
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-(--ink)"
-          >
-            Description{" "}
-            <span className="font-normal text-(--ink-mute)">
-              (optional)
-            </span>
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            rows={3}
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            disabled={isSubmitting}
-            placeholder="Add notes or context"
-            className={`mt-1.5 resize-y ${inputClass}`}
-          />
-        </div>
+      <div>
+        <label
+          htmlFor="title"
+          className="block text-sm font-medium text-(--ink)"
+        >
+          Title
+        </label>
+        <input
+          id="title"
+          name="title"
+          value={title}
+          onChange={(event) => setTitle(event.target.value)}
+          aria-describedby={titleError ? "title-error" : undefined}
+          aria-invalid={titleError ? true : undefined}
+          disabled={isSubmitting}
+          placeholder="What needs to be done?"
+          className={`mt-1.5 ${inputClass}`}
+        />
+        {titleError && (
+          <p id="title-error" className="mt-1.5 text-sm text-(--danger)">
+            {titleError}
+          </p>
+        )}
       </div>
 
       {isError && (

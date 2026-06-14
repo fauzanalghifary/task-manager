@@ -19,7 +19,7 @@ describe("TaskForm", () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it("submits trimmed task details and resets the form", async () => {
+  it("submits a trimmed title and resets the form", async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn().mockResolvedValue(undefined);
 
@@ -28,21 +28,13 @@ describe("TaskForm", () => {
     );
 
     await user.type(screen.getByLabelText("Title"), "  Prepare invoice  ");
-    await user.type(
-      screen.getByLabelText("Description (optional)"),
-      "  Send it to the customer  ",
-    );
     await user.click(screen.getByRole("button", { name: "Create task" }));
 
     await waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledWith({
-        title: "Prepare invoice",
-        description: "Send it to the customer",
-      });
+      expect(onSubmit).toHaveBeenCalledWith({ title: "Prepare invoice" });
     });
 
     expect(screen.getByLabelText("Title")).toHaveValue("");
-    expect(screen.getByLabelText("Description (optional)")).toHaveValue("");
   });
 
   it("keeps form values when creation fails", async () => {

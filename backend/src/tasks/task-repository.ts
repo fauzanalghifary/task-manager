@@ -7,7 +7,6 @@ import type { Task, TaskStatus } from "./task.js";
 interface TaskRow {
   id: string;
   title: string;
-  description: string | null;
   status: TaskStatus;
   created_at: string;
   updated_at: string;
@@ -15,14 +14,12 @@ interface TaskRow {
 
 interface CreateTaskInput {
   title: string;
-  description?: string;
 }
 
 function mapTask(row: TaskRow): Task {
   return {
     id: row.id,
     title: row.title,
-    description: row.description,
     status: row.status,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -37,7 +34,6 @@ export class TaskRepository {
     const task: Task = {
       id: randomUUID(),
       title: input.title,
-      description: input.description ?? null,
       status: "to_do",
       createdAt: timestamp,
       updatedAt: timestamp,
@@ -49,18 +45,16 @@ export class TaskRepository {
           INSERT INTO tasks (
             id,
             title,
-            description,
             status,
             created_at,
             updated_at
           )
-          VALUES (?, ?, ?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?)
         `,
       )
       .run(
         task.id,
         task.title,
-        task.description,
         task.status,
         task.createdAt,
         task.updatedAt,
@@ -73,7 +67,7 @@ export class TaskRepository {
     const rows = this.database
       .prepare(
         `
-          SELECT id, title, description, status, created_at, updated_at
+          SELECT id, title, status, created_at, updated_at
           FROM tasks
           WHERE deleted_at IS NULL
           ORDER BY created_at ASC, rowid ASC

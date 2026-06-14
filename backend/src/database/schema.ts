@@ -5,7 +5,6 @@ export function initializeSchema(database: Database.Database): void {
     CREATE TABLE IF NOT EXISTS tasks (
       id TEXT PRIMARY KEY,
       title TEXT NOT NULL,
-      description TEXT,
       status TEXT NOT NULL DEFAULT 'to_do'
         CHECK (status IN ('to_do', 'pending', 'in_progress', 'done')),
       created_at TEXT NOT NULL,

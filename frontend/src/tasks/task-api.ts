@@ -2,7 +2,6 @@ import type { Task } from "./task";
 
 export interface CreateTaskInput {
   title: string;
-  description?: string;
 }
 
 export async function fetchTasks(): Promise<Task[]> {
