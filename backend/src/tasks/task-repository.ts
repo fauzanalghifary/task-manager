@@ -52,13 +52,7 @@ export class TaskRepository {
           VALUES (?, ?, ?, ?, ?)
         `,
       )
-      .run(
-        task.id,
-        task.title,
-        task.status,
-        task.createdAt,
-        task.updatedAt,
-      );
+      .run(task.id, task.title, task.status, task.createdAt, task.updatedAt);
 
     return task;
   }
@@ -70,11 +64,44 @@ export class TaskRepository {
           SELECT id, title, status, created_at, updated_at
           FROM tasks
           WHERE deleted_at IS NULL
-          ORDER BY created_at ASC, rowid ASC
+          ORDER BY created_at, rowid
         `,
       )
       .all() as TaskRow[];
 
     return rows.map(mapTask);
+  }
+
+  findById(id: string): Task | null {
+    const row = this.database
+      .prepare(
+        `
+          SELECT id, title, status, created_at, updated_at
+          FROM tasks
+          WHERE id = ? AND deleted_at IS NULL
+        `,
+      )
+      .get(id) as TaskRow | undefined;
+
+    return row ? mapTask(row) : null;
+  }
+
+  updateStatus(
+    id: string,
+    fromStatus: TaskStatus,
+    toStatus: TaskStatus,
+    updatedAt: string,
+  ): boolean {
+    const result = this.database
+      .prepare(
+        `
+          UPDATE tasks
+          SET status = ?, updated_at = ?
+          WHERE id = ? AND status = ? AND deleted_at IS NULL
+        `,
+      )
+      .run(toStatus, updatedAt, id, fromStatus);
+
+    return result.changes === 1;
   }
 }

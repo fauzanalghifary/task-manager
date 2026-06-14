@@ -13,7 +13,7 @@ export function initializeSchema(database: Database.Database): void {
     );
 
     CREATE TABLE IF NOT EXISTS audit_logs (
-      id TEXT PRIMARY KEY,
+      id INTEGER PRIMARY KEY,
       task_id TEXT NOT NULL,
       actor TEXT NOT NULL,
       from_status TEXT NOT NULL
@@ -26,6 +26,18 @@ export function initializeSchema(database: Database.Database): void {
     );
 
     CREATE INDEX IF NOT EXISTS audit_logs_task_id_created_at_index
-      ON audit_logs(task_id, created_at);
+      ON audit_logs(task_id, created_at, id);
+
+    CREATE TRIGGER IF NOT EXISTS prevent_audit_logs_update
+    BEFORE UPDATE ON audit_logs
+    BEGIN
+      SELECT RAISE(ABORT, 'audit logs are immutable');
+    END;
+
+    CREATE TRIGGER IF NOT EXISTS prevent_audit_logs_delete
+    BEFORE DELETE ON audit_logs
+    BEGIN
+      SELECT RAISE(ABORT, 'audit logs are immutable');
+    END;
   `);
 }
