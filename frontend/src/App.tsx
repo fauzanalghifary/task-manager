@@ -7,7 +7,7 @@ function App() {
         <p className="mb-3 text-xs font-bold tracking-[0.12em] text-[#a0442b] uppercase">
           Internal workspace
         </p>
-        <h1 className="text-[clamp(2.5rem,7vw,4.75rem)] leading-[0.95] font-bold tracking-[-0.05em] text-[#20231d]">
+        <h1 className="text-[clamp(2.5rem,7vw,4.75rem)] leading-[0.95] font-bold tracking-tighter text-[#20231d]">
           Task Manager
         </h1>
         <p className="mt-6 max-w-xl text-lg leading-7">
